@@ -35,7 +35,7 @@ Descifrador de contraseñas usando ataques de diccionario contra hashes SHA256.
 ┌─────────────────────────────────────┐
 │  Ingresa archivo de diccionario     │
 │  Compara hashes SHA256              │
-│  Encuentra la contraseña coincidente │
+│  Encuentra la contraseña coincidente│
 └─────────────────────────────────────┘
 ```
 
@@ -295,10 +295,10 @@ Este proyecto está bajo la licencia MIT - ver el archivo [LICENSE](LICENSE) par
 
 ## 👨‍💻 Autor
 
-**Iván Rodríguez**
+**Iván Roldán**
 
 - Instagram: [@iivan_rld](https://www.instagram.com/iivan_rld/)
-- GitHub: [ivanr](https://github.com/ivanr)
+- GitHub: [ivanr](https://github.com/iivanrld)
 
 ---
 
