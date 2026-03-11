@@ -223,6 +223,122 @@ python cliente.py 192.168.1.100 /documentos/archivo.txt
 
 ---
 
+### 📋 Sistema de Incidencias
+**Archivos:** 
+- **Ejercicio 4 (Local):** [`Incidencias/incidencias.py`](Incidencias/incidencias.py)
+- **Ejercicio 3 (Red):** [`Incidencias/servidor_incidencias.py`](Incidencias/servidor_incidencias.py) y [`Incidencias/cliente_incidencias.py`](Incidencias/cliente_incidencias.py)
+
+Sistema completo para registrar y gestionar incidencias en dos versiones: local y distribuida.
+
+```
+┌─────────────────────────────────────┐
+│  Usuario registra incidencia        │
+│  Obtiene usuario, fecha y hora      │
+│  Opción 1: Guarda en fichero local  │
+│  Opción 2: Envía a servidor central │
+└─────────────────────────────────────┘
+```
+
+#### **Ejercicio 4: Incidencias Locales**
+
+Comando que registra incidencias en un fichero log local.
+
+**Características:**
+- ✅ Se invoca desde línea de comandos
+- ✅ Obtiene automáticamente el nombre de usuario
+- ✅ Registra fecha y hora exacta
+- ✅ Acumula registros (no sobrescribe)
+- ✅ Compatible Windows y Linux
+
+**Uso:**
+```bash
+# Modo 1: Con argumento
+python Incidencias/incidencias.py "Mi sesión sufre desconexiones periódicas"
+
+# Modo 2: Interactivo (sin argumentos)
+python Incidencias/incidencias.py
+# Escribe la descripción de la incidencia: Mi sesión sufre desconexiones
+```
+
+**Formato del fichero log:**
+```
+[2026-03-11 14:30:45] Usuario: usuario1 | Incidencia: Mi sesión sufre desconexiones
+[2026-03-11 14:35:20] Usuario: usuario2 | Incidencia: No puedo acceder al servidor
+[2026-03-11 15:00:10] Usuario: usuario1 | Incidencia: Impresora no funciona
+```
+
+#### **Ejercicio 3: Incidencias por Red (Cliente-Servidor)**
+
+Ampliación con arquitectura distribuida. Las incidencias se envían a un servidor central que las registra con IP origen.
+
+**Servidor:**
+```bash
+python Incidencias/servidor_incidencias.py
+```
+
+**Cliente:**
+```bash
+python Incidencias/cliente_incidencias.py "descripción de la incidencia"
+```
+
+**Características:**
+- 🌐 Arquitectura cliente-servidor
+- 📡 Comunicación por sockets TCP en puerto 3333
+- 🔍 Registro de IP origen de cada incidencia
+- ✅ Confirmación de recepción del servidor
+- 💼 Ideal para sistemas empresariales/distribuidos
+
+**Ejemplo completo:**
+
+Terminal 1 (Servidor):
+```bash
+$ python Incidencias/servidor_incidencias.py
+✓ Servidor iniciado en puerto 3333
+  Fichero de log: C:\ruta\incidencias.log
+Esperando incidencias de clientes...
+
+✓ Conexión desde 127.0.0.1:54321
+  Usuario: usuario1
+  Hora: 2026-03-11 14:30:45
+  Descripción: Mi sesión sufre desconexiones
+```
+
+Terminal 2 (Cliente):
+```bash
+$ python Incidencias/cliente_incidencias.py "Mi sesión sufre desconexiones"
+✓ Incidencia registrada correctamente
+```
+
+**Formato del fichero log con servidor:**
+```
+[2026-03-11 14:30:45] IP: 127.0.0.1 | Usuario: usuario1 | Incidencia: Mi sesión sufre desconexiones
+[2026-03-11 14:35:20] IP: 192.168.1.100 | Usuario: usuario2 | Incidencia: No puedo acceder al servidor
+```
+
+**Protocolo:**
+- Formato de mensaje: `usuario|hora|descripción`
+- Respuesta servidor: `OK` o `ERROR`
+- Puerto: 3333 (configurable)
+
+**Uso en red remota:**
+```bash
+# Cliente en otra máquina conectando a servidor central
+python Incidencias/cliente_incidencias.py "Mi problema" "192.168.1.100"
+```
+
+**Comparación:**
+
+| Aspecto | Ejercicio 4 | Ejercicio 3 |
+|---------|-----------|-----------|
+| **Tipo** | Local | Distribuida |
+| **Almacenamiento** | Fichero local | Servidor centralizado |
+| **Registro IP** | ❌ | ✅ |
+| **Alcance** | Una máquina | Red completa |
+| **Escalabilidad** | Baja | Alta |
+| **Validación** | ❌ | ✅ |
+
+---
+
 ## 🚀 Instalación
 
 ### Requisitos previos
@@ -298,7 +414,23 @@ $ python cliente.py localhost /documento.txt
 # Muestra el contenido del fichero
 ```
 
-### Opción 3: Menú interactivo (opcional)
+### Opción 3: Sistema de Incidencias
+
+**Versión Local (Ejercicio 4):**
+```bash
+python Incidencias/incidencias.py "descripción de la incidencia"
+```
+
+**Versión Red (Ejercicio 3):**
+```bash
+# Terminal 1 - Servidor
+python Incidencias/servidor_incidencias.py
+
+# Terminal 2 - Cliente (o máquina diferente)
+python Incidencias/cliente_incidencias.py "descripción de la incidencia"
+```
+
+### Opción 4: Menú interactivo (opcional)
 Crea un `main.py` para facilitar el uso:
 
 ```bash
@@ -348,6 +480,24 @@ puerto = 5000  # Debe ser el mismo que el servidor
 python cliente.py 192.168.1.100 /fichero.txt
 ```
 
+### Configurar Sistema de Incidencias
+
+**Cambiar puerto del servidor (por defecto 3333):**
+```python
+# En Incidencias/servidor_incidencias.py
+iniciar_servidor(3333)  # Cambia a cualquier puerto disponible
+```
+
+**Cambiar ruta del fichero log:**
+```python
+# En Incidencias/incidencias.py (Ejercicio 4)
+LOG_FILE = '/tmp/incidencias.log'  # Para Linux/Mac
+LOG_FILE = 'C:\\logs\\incidencias.log'  # Para Windows
+
+# En Incidencias/servidor_incidencias.py (Ejercicio 3)
+LOG_FILE = "ruta/del/fichero/incidencias.log"
+```
+
 ---
 
 ## 📊 Estadísticas
@@ -360,6 +510,9 @@ python cliente.py 192.168.1.100 /fichero.txt
 | qr.py | 10 | 1 (qrcode) | Baja |
 | servidor.py | 68 | 3 (socket, os, struct) | Media |
 | cliente.py | 52 | 3 (socket, sys, struct) | Media |
+| incidencias.py | 48 | 3 (sys, os, datetime) | Baja |
+| servidor_incidencias.py | 95 | 3 (socket, os, datetime) | Media |
+| cliente_incidencias.py | 63 | 4 (socket, sys, os, datetime) | Baja |
 
 ---
 
@@ -370,12 +523,14 @@ python cliente.py 192.168.1.100 /fichero.txt
 - El Port Scanning no autorizado puede ser ilegal
 - El Hash Cracking debe realizarse solo para auditoría personal
 - Nunca compartas diccionarios o hashes sensibles
+- El sistema de incidencias no incluye autenticación (agrégala en producción)
 
 ✅ **Buenas prácticas:**
 - Realiza auditorías de seguridad autorizadas
-- Documenta todos tus escaneos
+- Documenta todos tus escaneos e incidencias
 - Usa en entornos de laboratorio primero
 - Cumple con las leyes locales
+- Protege los ficheros de incidencias (contienen datos sensibles)
 
 ---
 
@@ -393,6 +548,10 @@ python cliente.py 192.168.1.100 /fichero.txt
 - [ ] Manejo de múltiples conexiones simultáneas
 - [ ] Interfaz GUI para compartición de ficheros
 - [ ] Soporte para descarga de múltiples ficheros
+- [ ] Autenticación para sistema de incidencias
+- [ ] Base de datos centralizada para incidencias
+- [ ] Búsqueda y filtrado de incidencias
+- [ ] Notificaciones en tiempo real
 
 ---
 
