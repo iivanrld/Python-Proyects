@@ -153,6 +153,76 @@ python qr.py
 
 ---
 
+### 📤 Protocolo de Compartición de Ficheros
+**Archivos:** [`servidor.py`](servidor.py) y [`cliente.py`](cliente.py)
+
+Sistema cliente-servidor para compartir ficheros a través de sockets TCP/IP. Perfecto para transferir archivos entre máquinas en la misma red o de forma remota.
+
+```
+┌─────────────────────────────────────┐
+│  Cliente solicita fichero           │
+│  Servidor busca en directorio       │
+│  Valida acceso seguro               │
+│  Envía contenido del fichero        │
+└─────────────────────────────────────┘
+```
+
+**Características:**
+- 🔐 Validación de seguridad (previene path traversal)
+- 📡 Protocolo robusto con tamaño de archivo
+- 🚀 Transferencia binaria eficiente
+- ⚡ Manejo de errores completo
+- 💻 Funciona en Windows, Linux y macOS
+
+**Componentes:**
+
+**Servidor:**
+```bash
+python servidor.py <ruta-del-directorio-a-compartir>
+```
+
+**Cliente:**
+```bash
+python cliente.py <ip-servidor> <ruta-relativa-fichero>
+```
+
+**Ejemplo de uso:**
+
+Terminal 1 (Servidor):
+```bash
+$ python servidor.py "c:\Users\usuario\compartido"
+Estas compartiendo la carpeta c:\Users\usuario\compartido ...
+Nos piden el fichero c:\Users\usuario\compartido\prac\trabajo.txt ...
+```
+
+Terminal 2 (Cliente):
+```bash
+$ python cliente.py localhost /prac/trabajo.txt
+TITULO DE FICHERO
+Este es el contenido del fichero que has pedido.
+Un fichero de texto normal y corriente
+```
+
+**Protocolo de Comunicación:**
+1. Cliente envía ruta del fichero (terminada con `\n`)
+2. Servidor responde con tamaño en 4 bytes (big-endian)
+3. Servidor envía el contenido del fichero
+4. Cliente muestra el contenido en pantalla
+
+**Uso en red:**
+```bash
+# En otra máquina (IP: 192.168.1.100)
+python cliente.py 192.168.1.100 /documentos/archivo.txt
+```
+
+**Limitaciones:**
+- ⚠️ Sin autenticación
+- ⚠️ Sin encriptación
+- ⚠️ Procesa conexiones secuencialmente
+- ℹ️ Ficheros en modo UTF-8
+
+---
+
 ## 🚀 Instalación
 
 ### Requisitos previos
@@ -203,7 +273,32 @@ python portscanner.py
 python qr.py
 ```
 
-### Opción 2: Menú interactivo (opcional)
+### Opción 2: Protocolo de Compartición de Ficheros
+
+**Iniciar servidor:**
+```bash
+# En Terminal 1
+python servidor.py "C:\ruta\del\directorio"
+```
+
+**Solicitar fichero (en otra Terminal o máquina):**
+```bash
+# En Terminal 2
+python cliente.py localhost /ruta/relativa/fichero.txt
+```
+
+**Ejemplo completo:**
+```bash
+# Terminal 1 - Servidor
+$ python servidor.py "C:\Users\usuario\compartido"
+Estas compartiendo la carpeta C:\Users\usuario\compartido ...
+
+# Terminal 2 - Cliente
+$ python cliente.py localhost /documento.txt
+# Muestra el contenido del fichero
+```
+
+### Opción 3: Menú interactivo (opcional)
 Crea un `main.py` para facilitar el uso:
 
 ```bash
@@ -235,6 +330,24 @@ Modifica el rango de puertos en `portscanner.py`:
 for puerto in range(1, 1000):  # Escanea solo puertos comunes
 ```
 
+### Configurar Protocolo de Compartición
+Personaliza el puerto y opciones en `servidor.py` y `cliente.py`:
+
+**Cambiar puerto (por defecto 5000):**
+```python
+# En servidor.py
+puerto = 5000  # Cambia a cualquier puerto disponible
+
+# En cliente.py
+puerto = 5000  # Debe ser el mismo que el servidor
+```
+
+**Usar en otra red:**
+```bash
+# Reemplaza "localhost" con la IP del servidor
+python cliente.py 192.168.1.100 /fichero.txt
+```
+
 ---
 
 ## 📊 Estadísticas
@@ -245,6 +358,8 @@ for puerto in range(1, 1000):  # Escanea solo puertos comunes
 | passgen.py | 12 | 2 (string, random) | Muy baja |
 | portscanner.py | 14 | 1 (socket) | Media |
 | qr.py | 10 | 1 (qrcode) | Baja |
+| servidor.py | 68 | 3 (socket, os, struct) | Media |
+| cliente.py | 52 | 3 (socket, sys, struct) | Media |
 
 ---
 
@@ -272,6 +387,12 @@ for puerto in range(1, 1000):  # Escanea solo puertos comunes
 - [ ] Escaneo asincrónico de puertos
 - [ ] Validación de entrada mejorada
 - [ ] Logging de eventos
+- [ ] Autenticación para protocolo de compartición (usuario/contraseña)
+- [ ] Encriptación SSL/TLS para servidor-cliente
+- [ ] Listado de directorios remotos
+- [ ] Manejo de múltiples conexiones simultáneas
+- [ ] Interfaz GUI para compartición de ficheros
+- [ ] Soporte para descarga de múltiples ficheros
 
 ---
 
